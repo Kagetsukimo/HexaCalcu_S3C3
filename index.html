@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六轉碎片計算機</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 640px;
+            margin: auto;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            height: 25px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: left ;
+            position: relative;
+        }
+        .form-group label {
+            font-weight: bold;
+            color: #555;
+            display: inline-block; /* 使寬度設定生效 */
+            text-align: left; /* 讓文本左對齊 */
+        }
+        .currenttitle-label{
+            position: absolute;            
+            right: 83px;
+            font-size: 14px;
+        }
+        .objecttitle-label{
+            position: absolute;
+            right: 3px;            
+            font-size: 14px;
+        }
+        .skillname-label{
+            width: 192px;
+        }
+        .needfrag-label{
+            width: 270px;
+            font-size: 14px;
+        }
+        .form-group select{
+            height: 25px;
+        }
+        .job-select{
+            position: absolute;
+            right: 0px;
+            width: 110px;
+        }
+        .level-select{
+            position: absolute;
+            right: 82px;
+            width: 60px;
+        }
+        .object-select{
+            position: absolute;
+            right: 2px;
+            width: 60px;
+        }
+        .reward-select{
+            position: absolute;
+            right: 2px;
+        }
+        .inputone {
+            position: absolute;
+            text-align: center;
+            width: 80px;
+            padding: 5px;
+            right: 0;
+        }
+        .level-input{
+            position: absolute;
+            text-align: center;
+            width: 48px;
+            padding: 4px;
+            right: 82px;
+        }
+        .object-input{
+            position: absolute;
+            text-align: center;
+            width: 48px;
+            padding: 4px;
+            right: 2px;
+        }
+        .soul-label{
+            position: absolute;
+            right: 97px;
+            font-size: 14px;
+        }
+        .souls-label{
+            position: absolute;
+            right: 22px;
+            font-size: 14px;
+        }
+        .soul-select{
+            position: absolute;
+            right: 82px;
+            width: 60px;
+            text-align: center;
+        }
+        .souls-select{
+            position: absolute;
+            right: 2px;
+            width: 60px;
+            text-align: center;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .rebtn{
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .rebtn:hover {
+            background-color: #45a049;
+        }
+        .result {
+            font-weight: bold;
+            width: 200px;
+            display: inline-block; /* 使寬度設定生效 */
+            text-align: left; /* 讓文本左對齊 */
+        }
+        .result-text{
+            font-weight: bold;
+            text-align: left; /* 讓文本左對齊 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>六轉進度計算機</h1>
+        <div class="form-group">
+            <label>職業</label>
+            <select id="jobSelect" class="job-select" onchange="updateSkills()">
+                <script>
+                    var jobs = ['選擇職業','英雄','聖騎士','黑騎士',
+                        '火毒大魔導士','冰雷大魔導士','主教',
+                        '箭神','神射手','開拓者',
+                        '夜使者','暗影神偷','影武者',
+                        '拳霸','槍神','重砲指揮官',
+                        '米哈逸','聖魂劍士','烈焰巫師','破風使者','暗夜行者','閃雷悍將',
+                        '惡魔殺手','惡魔復仇者','爆拳槍神','煉獄巫師','狂豹獵人','傑諾','機甲戰神',
+                        '狂狼勇士','龍魔導士','夜光','精靈遊俠','幻影俠盜','隱月',
+                        '凱撒','蕾媞','凱殷','卡蒂娜','天使破壞者',
+                        '阿戴爾','伊利恩','卡莉','亞克',
+                        '劍豪','陰陽師',
+                        '蓮','菈菈','虎影',
+                        '墨玄','琳恩','神之子','凱內西斯'
+                    ];
+                    for (let jobSelect of jobs) {
+                    document.write(`<option value="${jobSelect}">${jobSelect}</option>`);
+                    }
+                </script>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="currenttitle-label">當前等級</label>
+            <label class="objecttitle-label">目標等級</label>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label class="skillname-label" id="skillLabel1">技能核心1</label>
+            </div>
+            <div>
+                <label class="needfrag-label" id="remainskillfrags1"></label>
+            </div>
+                <input id="skillLevel1" class="level-input" type="number" min="0" max="30" step="1" required>
+                <input id="objectskillLevel1" class="object-input" type="number" min="0" max="30" step="1" required>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label class="skillname-label" id="skillLabel2">上升技能</label>
+            </div>
+            <div>
+                <label class="needfrag-label" id="remainskillfrags2"></label>
+            </div>
+                <input id="skillLevel2" class="level-input" type="number" min="0" max="30" step="1" required>
+                <input id="objectskillLevel2" class="object-input" type="number" min="0" max="30" step="1" required>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label class="skillname-label" id="skillLabel3">技能核心3</label>
+            </div>
+            <div>
+                <label class="needfrag-label" id="remainskillfrags3"></label>
+            </div>
+                <input id="skillLevel3" class="level-input" type="number" min="0" max="30" step="1" required>
+                <input id="objectskillLevel3" class="object-input" type="number" min="0" max="30" step="1" required>
+        </div>
+        
+        <div class="form-group">
+            <div>
+                <label class="skillname-label" id="masterLabel1">精通核心1</label>
+            </div>
+            <div>
+                <label class="needfrag-label" id="remainmasterfrags1"></label>
+            </div>
+            <input id="masterLevel1" class="level-input" type="number" min="0" max="30" step="1" required>
+            <input id="objectmasterLevel1" class="object-input" type="number" min="0" max="30" step="1" required>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label class="skillname-label" id="masterLabel2">精通核心2</label>
+            </div>
+            <div>
+                <label class="needfrag-label" id="remainmasterfrags2"></label>
+            </div>
+            <input id="masterLevel2" class="level-input" type="number" min="0" max="30" step="1" required>
+            <input id="objectmasterLevel2" class="object-input" type="number" min="0" max="30" step="1" required>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label class="skillname-label" id="masterLabel3">精通核心3</label>
+            </div>
+            <div>
+                <label class="needfrag-label" id="remainmasterfrags3"></label>
+            </div>
+            <input id="masterLevel3" class="level-input" type="number" min="0" max="30" step="1" required>
+            <input id="objectmasterLevel3" class="object-input" type="number" min="0" max="30" step="1" required>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label class="skillname-label" id="masterLabel4">精通核心4</label>
+            </div>
+            <div>
+                <label class="needfrag-label" id="remainmasterfrags4"></label>
+            </div>
+            <input id="masterLevel4" class="level-input" type="number" min="0" max="30" step="1" required>
+            <input id="objectmasterLevel4" class="object-input" type="number" min="0" max="30" step="1" required>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label class="skillname-label" id="enhanceLabel1">強化核心1</label>
+            </div>
+            <div>
+                <label class="needfrag-label" id="remainenhancefrags1"></label>
+            </div>
+            <input id="enhancementLevel1" class="level-input" type="number" min="0" max="30" step="1" required>
+            <input id="objectenhancementLevel1" class="object-input" type="number" min="0" max="30" step="1" required>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label class="skillname-label" id="enhanceLabel2">強化核心2</label>
+            </div>
+            <div>
+                <label class="needfrag-label" id="remainenhancefrags2"></label>
+            </div>
+            <input id="enhancementLevel2" class="level-input" type="number" min="0" max="30" step="1" required>
+            <input id="objectenhancementLevel2" class="object-input" type="number" min="0" max="30" step="1" required>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label class="skillname-label" id="enhanceLabel3">強化核心3</label>
+            </div>
+            <div>
+                <label class="needfrag-label" id="remainenhancefrags3"></label>
+            </div>
+            <input id="enhancementLevel3" class="level-input" type="number" min="0" max="30" step="1" required>
+            <input id="objectenhancementLevel3" class="object-input" type="number" min="0" max="30" step="1" required>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label class="skillname-label" id="enhanceLabel4">強化核心4</label>
+            </div>
+            <div>
+                <label class="needfrag-label" id="remainenhancefrags4"></label>
+            </div>
+            <input id="enhancementLevel4" class="level-input" type="number" min="0" max="30" step="1" required>
+            <input id="objectenhancementLevel4" class="object-input" type="number" min="0" max="30" step="1" required>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label class="skillname-label" id="commonLabel">靈魂雅努斯</label>
+            </div>
+            <div>
+                <label class="needfrag-label" id="remaincommonfrags1"></label>
+            </div>
+            <input id="commonLevel1" class="level-input" type="number" min="0" max="30" step="1" required>
+            <input id="objectcommonLevel1" class="object-input" type="number" min="0" max="30" step="1" required>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label class="skillname-label" id="commonLabel">靈魂赫卡忒</label>
+            </div>
+            <div>
+                <label class="needfrag-label" id="remaincommonfrags2"></label>
+            </div>
+            <input id="commonLevel2" class="level-input" type="number" min="0" max="30" step="1" required>
+            <input id="objectcommonLevel2" class="object-input" type="number" min="0" max="30" step="1" required>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label class="skillname-label" id="commonLabel">職業共通</label>
+            </div>
+            <div>
+                <label class="needfrag-label" id="remaincommonfrags3"></label>
+            </div>
+            <input id="commonLevel3" class="level-input" type="number" min="0" max="30" step="1" required>
+            <input id="objectcommonLevel3" class="object-input" type="number" min="0" max="30" step="1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="remainFragments">剩餘碎片</label>
+            <input id="remainFragments" class="inputone" type="number" min="0" step="1" required>
+        </div>
+        <div class="form-group">
+            <label class="soul-label">靈魂</label>
+            <label class="souls-label">氣息</label>
+        </div>
+        <div class="form-group">
+            <label for="remainSouls">剩餘氣息</label>
+            <input class="level-input" id="currentsoul" type="number" min="0" max="20" step="1" required>
+            <select class="souls-select" id="currentsouls">
+                <script>
+                    for (let i = 0; i <= 990; i=i+10) {
+                        document.write(`<option value="${i}">${i}</option>`);
+                    }
+                </script>
+            </select>
+          </div>
+        
+        <button class="btn" onclick="calculate()">計算</button>
+        <div class="form-group">
+            <div class="result">
+                <p>消耗碎片: <span id="currentConsumedLabel">0</span></p>
+            </div>
+            <div class="result"></div>
+            <div class="result">
+                <p>消耗靈魂: <span id="currenetConsumedSoulLabel">0</span></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="result">
+                <p>還需碎片: <span id="needFragsLabel">0</span></p>
+            </div>
+            <div class="result">
+                <p>不計雅努斯還需: <span id="noCommonNeedFragsLabel">0</span></p>
+            </div>
+            <div class="result">
+                <p>還需靈魂: <span id="needSoulLabel">0</span></p>  
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="result">
+                <p>碎片進度: <span id="fragsProgressLabel">0%</span></p>
+            </div>
+            <div class="result">
+                <p>不計雅努斯進度: <span id="noCommonFragsProgressLabel">0%</span></p>
+            </div>
+            <div class="result">
+                <p>靈魂進度: <span id="soulProgressLabel">0%</span></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="result-text">
+                <p>進度會計算剩餘碎片以及氣息 目標等級則不計算</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="result">
+                <p>目標等級所需碎片: <span id="objectLevelNeeds">0</span></p>                
+            </div>
+            <div class="result"></div>
+            <div class="result">
+                <p>目標等級所需靈魂: <span id="objectLevelNeedsSoul">0</span></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="result-text">
+                <p>重置按鍵會把已儲存的都刪除且還原預設值 沒事不要亂按</p>
+            </div>
+        </div>
+        <button class="rebtn" onclick="reset()">重置</button>
+        
+        <div class="form-group">
+            <div class="result-text">
+                <a href="https://www.twitch.tv/kagetsukimo" target="_blank">偷偷宣傳我ㄉ圖其 可以支持一下</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        //全職業技能精通強化
+        var jobsSkills = {
+            '選擇職業' : ['技能核心1','技能核心2','技能核心3','精通核心1','精通核心2','精通核心3','精通核心4','強化核心1','強化核心2','強化核心3','強化核心4'],
+            '英雄' : ['靈魂聖劍','無聲斬擊','技能核心3','狂暴攻擊VI','憤怒爆發VI','靈氣之刃VI','劍士意念VI','燃燒靈魂之劍','空間斬','鬥氣本能','劍之幻象'],
+            '聖騎士' : ['聖域展開','聖獅之主','技能核心3','騎士衝擊波VI','神聖衝擊VI','鬼神之擊VI','終極之劍VI','神聖團結','祝福之鎚','聖十字架','雷神戰鎚'],
+            '黑騎士' : ['滅世永恆之槍','黑暗契約','技能核心3','岡格尼爾之擊VI','暗炎斬連殺VI','闇靈復仇VI','追隨者衝擊VI','斷罪之槍','闇靈衝擊','槍刺旋風','黑暗靈氣'],
+            '火毒大魔導士' : ['劇毒煉獄','豪火烈焰','技能核心3','技能核心3','火焰之襲VI','地獄爆發VI','燎原之火VI','劇毒領域VI','持續制裁者','劇毒新星','火炎神之怒號','劇毒連鎖'],
+            '冰雷大魔導士' : ['殛凍領域','圓弧雷鳴','技能核心3','閃電連擊VI','冰鋒刃VI','雷霆萬鈞VI','閃電球VI','冰河紀元','落雷凝聚','冰雪之精神','眾神之雷'],
+            '主教' : ['天堂神罰','天堂聖令','技能核心3','天使之箭VI','核爆術VI','天使之觸VI','天怒VI','聖靈祈禱','天秤之使','和平使者','神之懲罰'],
+            '箭神' : ['箭影紛飛','零點射擊','技能核心3','暴風神射VI','箭座VI','魔幻箭筒VI','閃光幻象VI','箭雨','殘影之矢','焰箭齊發','殘影幻象'],
+            '神射手' : ['裂空狙擊','絕命扳機','技能核心3','必殺狙擊VI','光速神弩VI','召喚銀隼VI','終極之弩VI','真必殺狙擊','分裂之矢','能量弩矢','連射十字弓砲彈'],
+            '開拓者' : ['忘卻遺跡','遺跡穿透','技能核心3','基本爆破VI','基本釋放VI','稜之共鳴VI','連段襲擊VI','究極炸裂','渡鴉風暴','黑曜石屏障','遺跡解放'],
+            '夜使者' : ['禁咒之符','致命突襲','技能核心3','四飛閃VI','刺客刻印VI','絕殺領域VI','穢土轉生VI','散式投擲','風魔手裏劍','達克魯的密傳','飛閃起爆符'],
+            '暗影神偷' : ['一刀兩斷','至暗真理','技能核心3','致命暗殺VI','楓幣炸彈VI','絕殺領域VI','穢土轉生VI','滅殺刃影','黑影切斷','音速狂襲','滅鬼斬靈陣'],
+            '影武者' : ['無盡阿修羅','閻王敕令','技能核心3','幻影箭VI','修羅VI','隱藏刀VI','短刀護佑VI','暴風刃','炎獄修羅斬','疾刃颶風','幽靈之刃'],
+            '拳霸' : ['海龍霸拳','強力打擊','技能核心3','閃連殺VI','海龍VI','海龍石VI','勾拳爆破VI','海之霸主','海龍螺旋','海龍衝鋒','海龍正拳'],
+            '槍神' : ['非常召集','爆裂散射','技能核心3','瞬‧迅雷VI','海盜砲擊艇VI','爆頭射擊VI','召喚船員VI','槍彈盛宴','死亡之眼','鯨魚號突擊','死亡板機'],
+            '重砲指揮官' : ['究極炸裂加農砲','猴子烈火轟炸','技能核心3','加農砲連擊VI','加農砲火箭VI','滾動彩虹加農炮VI','狂暴猴子VI','超級巨型加農砲彈','ICBM','特種猴子部隊','精準轟炸'],
+            '米哈逸' : ['輝煌聖劍','不死騎士','技能核心3','閃光交叉VI','皇家之盾VI','致命衝擊VI','進擊防禦VI','熾天覆七重圓環','光輝聖劍','魂光劍擊','光之勇氣'],
+            '聖魂劍士' : ['銀河星爆','全蝕之力','技能核心3','烈日狂斬VI','宇宙轟炸VI','宇宙爆裂VI','雙重狂斬VI','宇宙','極樂之境','靈魂蝕日','閃焰重擊'],
+            '烈焰巫師' : ['永恆鳳炎','炎燄協奏曲','技能核心3','元素之炎VI','極致熾烈VI','魔法爆發VI','地獄崛起VI：火獅模式','炙熱元素之炎','裂炎爆發','無盡之炎燄','火蜥蜴的惡作劇'],
+            '破風使者' : ['風之聖諭','元素風暴','技能核心3','天空之歌VI','風妖精之箭VI','妖精護盾VI','暴風加護VI','狂風呼嘯','風轉奇想','西爾芙之壁','漩渦巨球'],
+            '暗夜行者' : ['靜謐之夜','冥河指令','技能核心3','五連投擲VI','飢餓蝙蝠VI','闇黑天魔VI','道米尼奧VI','影之槍','闇影侍從','闇影吞噬','闇影投擲'],
+            '閃雷悍將' : ['浪馳雷掣','疾浪殲滅','技能核心3','消滅VI','霹靂VI','颱風VI','海波VI','神雷合一','巨鯊狂浪','雷神槍擊','槍雷連擊'],
+            '惡魔殺手' : ['夢魘魔域','紫晶侵入','技能核心3','惡魔衝擊VI','惡魔狂斬VI','變形VI','地獄犬VI','惡魔覺醒','耶夢加得','奧爾特羅斯','惡魔毀滅'],
+            '惡魔復仇者' : ['魔劍鎮魂曲','勇猛怒焰','技能核心3','盾牌追擊VI','逆十文字斬VI','超越：月光斬VI','瞬千刃VI','惡魔狂亂','血腥盛宴','次元之刃','亡靈'],
+            '爆拳槍神' : ['星殞重拳','先鋒衝擊','技能核心3','連發重擊VI','釋能衝擊堆VI','衝擊波動VI','旋轉加農砲VI','毀滅左輪','火神重擊','燃燒破壞者','殘影衝擊'],
+            '煉獄巫師' : ['緋紅契約','幽暗靈氣','技能核心3','死神VI','終極攻擊VI','黑暗閃電VI','黑暗世紀VI','聯盟繩索','黑魔祭壇','冥界死神','深淵閃電'],
+            '狂豹獵人' : ['絕對美洲豹時間','齒輪風暴','技能核心3','狂野機關砲:巔峰VI','助攻VI','指令VI','另一個咬擊VI','指令:掠食者之眼','狂暴咬擊','原始綻放','狂野機關炮:超速動能'],
+            '傑諾' : ['人工進化','新時代瞬擊','技能核心3','偽裝掃蕩VI','三角列陣VI','飛彈系統VI','疾風劍舞VI','滅世雷射光','超載模式','能量領域‧融合','光子射線'],
+            '機甲戰神' : ['原爆點','合金盔甲：殲滅','技能核心3','巨型火炮VI','追蹤飛彈VI','扭曲領域VI','機甲大砲：RM7 VI','多重屬性:M-FL','微型導彈箱','火力全開','巨型航母'],
+            '狂狼勇士' : ['鬥破山河','極冰咆嘯','技能核心3','比耀德VI','目標鎖定VI','究極極速巔峰－背水一戰VI','極凍之地 VI','瑪哈之疾','揮動瑪哈','芬里爾墜擊','極冰風暴'],
+            '龍魔導士' : ['龍星群','融合爆發','技能核心3','魔力之環VI','閃雷之環VI','龍之躍VI','龍之氣息VI','元素滅殺破','聖龍突襲','星宮射線','魔力之旋'],
+            '夜光' : ['創世紀','璀璨寶珠','技能核心3','絕對擊殺VI','極速反射VI','暗黑烈焰VI','暮光新星VI','真理之門','混沌共鳴','光與暗的洗禮','解放寶珠'],
+            '精靈遊俠' : ['不朽榮光','元素精神','技能核心3','伊修塔爾之環VI','憤怒天使VI','光速雙擊VI','終極攻擊VI','元素精靈','西皮迪亞','伊里加爾的氣息','皇家騎士'],
+            '幻影俠盜' : ['命運詠嘆調','月光小夜曲','技能核心3','卡牌風暴VI','連犽突進VI','死神卡牌VI','玫瑰四重曲VI','命運鬼牌','黑傑克','幻影標記','間隙破壞'],
+            '隱月' : ['狐神附體','靈月','技能核心3','鬼斬VI','靈魂帳幕VI','爆流拳VI','靈魂帳幕VI','精靈聚集','鬼武陣','真鬼斬','破碎連拳'],
+            '凱撒' : ['不滅凱撒抑制','熾焰本能','技能核心3','藍焰恐懼VI','意志之劍VI','龍烈焰VI','地龍襲擊VI','超新星守護者','重磅出極','天龍恐懼','龍焰合一'],
+            '蕾媞' : ['技能核心1','技能核心2','技能核心3','精通核心1','精通核心2','精通核心3','精通核心4','強化核心1','強化核心2','強化核心3','強化核心4'],
+            '凱殷' : ['惡意主宰','惡意閃影','技能核心3','破塵箭VI','衝擊箭VI','強化崩壞爆破VI','死亡祝福VI','[具現]龍之爆裂','[處刑]致命奇襲','死亡降臨','掌握痛苦'],
+            '卡蒂娜' : ['鏈之藝術:屠殺','殘暴毀滅','技能核心3','鞭擊VI','武器變換VI','召喚：狼牙棒VI','職業代理人VI','鏈之藝術:護佑','召喚:A.D大砲','鏈之藝術:漩渦','武器變換終章'],
+            '天使破壞者' : ['完美落幕','真誠應援','技能核心3','三位一體VI','靈魂探求者VI','超級超新星VI','原始咆嘯VI','能量爆炸','聚光燈','小萌新吉祥物','三位一體融合'],
+            '阿戴爾' : ['無限劍制','統一','技能核心3','切割VI','追蹤VI','穿刺VI','創造VI','毀滅','無限','復原','乙太風暴'],
+            '伊利恩' : ['無垠水晶','艾西迪溫','技能核心3','暗器VI','致命龍劍風VI','里幽VI','技藝：朗基努斯VI','水晶燃燒','神怒寶劍','靈魂水晶','水晶之門'],
+            '卡莉' : ['魔咒:沙塵暴','虛空覺醒','技能核心3','藝術:亂舞VI','虛空衝刺VI','魔咒：環刃之怒VI','共鳴VI','魔咒:毀滅','虛空破滅','藝術:阿斯特拉','共鳴:最後通牒'],
+            '亞克' : ['亙古凝視的深淵','絕對深淵的低語','技能核心3','雷普技能VI','侵蝕技能VI','歸來的憎恨VI','無法遺忘的噩夢VI','根源的記憶','無限技能','滲出的噩夢/凶夢','無限飢餓的猛獸'],
+            '劍豪' : ['終焉之須佐能乎','剎那的呼吸','技能核心3','[神速]霧斬VI','[神速]新月斬VI','[拔刀]殘月斬VI','[拔刀]咆哮的滿月VI','初月之形','[神速]下降的滿潮','[神速]奔馳的閃光','[拔刀]哀號的天光'],
+            '陰陽師' : ['[天令]霸王降臨]','[天令]滅息','技能核心3','破魂符-舞VI','召喚：鬼VI','召喚：天狗VI','召喚：大蛇VI','[靈魂]十尾妖狐的羈絆','[靈魂]部分解放：燃炎光刃','[靈魂]部分解放：黑翼破天','[靈魂]部分解放：絕魂毒牙'],
+            '蓮' : ['蒼龍闢天劍:昇天','一梅落花天悲人寂','技能核心3','梅花劍祕笈:先斬VI','亡魂劍祕笈:靈擊VI','亡魂降臨VI','梅花劍二式:碎梅VI','梅花劍絕技:萬里香','亡靈覺醒','梅花劍絕技:閃舞','亡魂劍絕技:心劍'],
+            '菈菈' : ['花花綠綠大草原','花朵滿開','技能核心3','精氣散播VI','龍脈釋放VI','龍脈吸收VI','喚醒VI','大大的舒展','日江山風','翻騰的精氣','蜿蜒的山脊'],
+            '虎影' : ['開天闢地','天世揮靈','技能核心3','金箍棒VI','如意扇VI','幻影分身符VI','卷術：吸星渦流VI','極大分身亂舞','山靈召喚','降臨怪力亂神','天地人幻影'],
+            '墨玄' : ['絕技:破荒拳','絕技：極波裂地','技能核心3','玄山:招式展開VI','神功:亂打連拳VI','旋風腳VI','移形換位VI','絕技:玄天拳','絕技:無我之境','絕技:暴技','神功:泰山擊'],
+            '琳恩' : ['森林守護者','翠影突襲','技能核心3','重創VI','暗襲VI','啄VI','[集中]治癒VI','無情掠擊','蒼空追擊','[集中]覺醒','自然的恩典'],
+            '神之子' : ['時之境界','時之界域','技能核心3','狂風千刃VI','旋風急轉彎VI','趨前砍擊VI','昇龍斬VI','終焉之時','協力攻擊','暗影瞬閃','自主武器'],
+            '凱內西斯' : ['將軍','分形邊界','梅泰利爾VI','技能核心3','擷取心靈VI','終極技－火車扔擲VI','心靈傳動VI','心靈龍捲風','終極-移動物質','終極:心靈彈丸','引力法則'],
+        }
+        
+        function updateSkills() {
+            var jobSelect = document.getElementById('jobSelect').value;
+            var skillLabels = jobsSkills[jobSelect] || [
+                '技能核心1','技能核心2','技能核心3',
+                '精通核心1','精通核心2','精通核心3','精通核心4',
+                '強化核心1','強化核心2','強化核心3','強化核心4'
+            ];
+
+            document.getElementById('skillLabel1').innerText = skillLabels[0];
+            document.getElementById('skillLabel2').innerText = skillLabels[1];
+            document.getElementById('skillLabel3').innerText = skillLabels[2];
+            document.getElementById('masterLabel1').innerText = skillLabels[3];
+            document.getElementById('masterLabel2').innerText = skillLabels[4];
+            document.getElementById('masterLabel3').innerText = skillLabels[5];
+            document.getElementById('masterLabel4').innerText = skillLabels[6];
+            document.getElementById('enhanceLabel1').innerText = skillLabels[7];
+            document.getElementById('enhanceLabel2').innerText = skillLabels[8];
+            document.getElementById('enhanceLabel3').innerText = skillLabels[9];
+            document.getElementById('enhanceLabel4').innerText = skillLabels[10];
+
+            // 儲存職業選擇，切換職業時立即生效
+            localStorage.setItem('jobSelect', jobSelect);
+        }
+        function calculate() {
+            //碎片
+            var skillLevelArr = [0, 30, 35, 40, 45, 50, 55, 60, 65, 200, 80, 90, 100, 110, 120, 130, 140, 150, 160, 350, 170, 180, 190, 200, 210, 220, 230, 240, 250, 500, 0];
+            var skillLevelArr2 = [100, 30, 35, 40, 45, 50, 55, 60, 65, 200, 80, 90, 100, 110, 120, 130, 140, 150, 160, 350, 170, 180, 190, 200, 210, 220, 230, 240, 250, 500, 0];
+            var skillLevelArr3 = [140, 21, 26, 30, 34, 38, 43, 47, 51, 142, 62, 69, 77, 83, 91, 98, 105, 112, 120, 252, 128, 136, 145, 152, 161, 168, 177, 184, 193, 357, 0];
+            var masterLevelArr = [50, 15, 18, 20, 23, 25, 28, 30, 33, 100, 40, 45, 50, 55, 60, 65, 70, 75, 80, 175, 85, 90, 95, 100, 105, 110, 115, 120, 125, 250, 0];
+            var enhancementLevelArr = [75, 23, 27, 30, 34, 38, 42, 45, 49, 150, 60, 68, 75, 83, 90, 98, 105, 113, 120, 263, 128, 135, 143, 150, 158, 165, 173, 180, 188, 375, 0];
+            var commonLevelArr = [125, 38, 44, 50, 57, 63, 69, 75, 82, 300, 110, 124, 138, 152, 165, 179, 193, 207, 220, 525, 234, 248, 262, 275, 289, 303, 317, 330, 344, 750, 0];
+            var commonLevelArr3 = [90, 25, 30, 35, 40, 45, 50, 55, 60, 180, 73, 81, 90, 98, 107, 115, 124, 132, 141, 315, 151, 160, 170, 179, 189, 198, 208, 217, 227, 450, 0];
+            var all_skill_frags = 4400;
+            var all_skill_frags2 = 4500;
+            var all_skill_frags3 = 3442;
+            var all_master_frags = 2252;
+            var all_enhance_frags = 3383;
+            var all_common_frags = 6268;
+            var all_common_frags3 = 4035;
+            var allFrag = all_skill_frags + all_skill_frags2 + all_skill_frags3 + all_master_frags*4 + all_enhance_frags*4 + all_common_frags*2 + all_common_frags3;
+            var noSolJanusFrag = allFrag - all_common_frags;
+            //氣息
+            var skillLevelSoulArr = [0,1,1,1,2,2,2,3,3,10,3,3,4,4,4,4,4,4,5,15,5,5,5,5,5,6,6,6,7,20];
+            var skillLevelSoulArr2 = [5,1,1,1,2,2,2,3,3,10,3,3,4,4,4,4,4,4,5,15,5,5,5,5,5,6,6,6,7,20];
+            var skillLevelSoulArr3 = [7,1,1,1,1,2,2,2,2,8,2,2,3,3,3,3,3,3,3,12,4,4,4,4,4,4,5,5,5,14];
+            var masterLevelSoulArr = [3,1,1,1,1,1,1,2,2,5,2,2,2,2,2,2,2,2,3,8,3,3,3,3,3,3,3,3,4,10];
+            var enhancementLevelSoulArr = [4,1,1,1,2,2,2,3,3,8,3,3,3,3,3,3,3,3,4,12,4,4,4,4,4,5,5,5,6,15];
+            var commonLevelSoulArr = [7,2,2,2,3,3,3,5,5,14,5,5,6,6,6,6,6,6,7,17,7,7,7,7,7,9,9,9,10,20];
+            var commonLevelSoulArr3 = [4,1,1,1,2,2,2,3,3,9,3,3,3,3,4,4,4,4,4,14,4,5,5,5,5,5,5,5,6,18];
+            var all_skill_soul = 145;
+            var all_skill_soul2 = 150;
+            var all_skill_soul3 = 117;
+            var all_master_soul = 83;
+            var all_enhance_soul = 123;
+            var all_common_soul = 208;
+            var all_common_soul3 = 137;
+            var allSoul = all_skill_soul + all_skill_soul2 + all_skill_soul3 + all_master_soul*4 + all_enhance_soul*4 + all_common_soul*2 + all_common_soul3;
+            var noSolJanusSoul = allSoul - all_common_soul;
+            //獲取輸入值
+            var skillLevel1 = parseInt(document.getElementById('skillLevel1').value) || 1;
+            var skillLevel2 = parseInt(document.getElementById('skillLevel2').value) || 0;
+            var skillLevel3 = parseInt(document.getElementById('skillLevel3').value) || 0;
+            var masterLevel1 = parseInt(document.getElementById('masterLevel1').value) || 0;
+            var masterLevel2 = parseInt(document.getElementById('masterLevel2').value) || 0;
+            var masterLevel3 = parseInt(document.getElementById('masterLevel3').value) || 0;
+            var masterLevel4 = parseInt(document.getElementById('masterLevel4').value) || 0;
+            var enhancementLevel1 = parseInt(document.getElementById('enhancementLevel1').value) || 0;
+            var enhancementLevel2 = parseInt(document.getElementById('enhancementLevel2').value) || 0;
+            var enhancementLevel3 = parseInt(document.getElementById('enhancementLevel3').value) || 0;
+            var enhancementLevel4 = parseInt(document.getElementById('enhancementLevel4').value) || 0;
+            var commonLevel1 = parseInt(document.getElementById('commonLevel1').value) || 0;
+            var commonLevel2 = parseInt(document.getElementById('commonLevel2').value) || 0;
+            var commonLevel3 = parseInt(document.getElementById('commonLevel3').value) || 0;
+            var objectskillLevel1 = parseInt(document.getElementById('objectskillLevel1').value) || 1;
+            var objectskillLevel2 = parseInt(document.getElementById('objectskillLevel2').value) || 0;
+            var objectskillLevel3 = parseInt(document.getElementById('objectskillLevel3').value) || 0;
+            var objectmasterLevel1 = parseInt(document.getElementById('objectmasterLevel1').value) || 0;
+            var objectmasterLevel2 = parseInt(document.getElementById('objectmasterLevel2').value) || 0;
+            var objectmasterLevel3 = parseInt(document.getElementById('objectmasterLevel3').value) || 0;
+            var objectmasterLevel4 = parseInt(document.getElementById('objectmasterLevel4').value) || 0;
+            var objectenhancementLevel1 = parseInt(document.getElementById('objectenhancementLevel1').value) || 0;
+            var objectenhancementLevel2 = parseInt(document.getElementById('objectenhancementLevel2').value) || 0;
+            var objectenhancementLevel3 = parseInt(document.getElementById('objectenhancementLevel3').value) || 0;
+            var objectenhancementLevel4 = parseInt(document.getElementById('objectenhancementLevel4').value) || 0;
+            var objectcommonLevel1 = parseInt(document.getElementById('objectcommonLevel1').value) || 0;
+            var objectcommonLevel2 = parseInt(document.getElementById('objectcommonLevel2').value) || 0;
+            var objectcommonLevel3 = parseInt(document.getElementById('objectcommonLevel3').value) || 0;
+            var remainFragments = parseInt(document.getElementById('remainFragments').value) || 0;
+            var soul = parseInt(document.getElementById('currentsoul').value) || 0;
+            var souls = parseInt(document.getElementById('currentsouls').value) || 0;
+            var jobSelect = document.getElementById('jobSelect').value || "選擇職業";
+            //其他值
+            var remainskillfrags1 = document.getElementById('remainskillfrags1').value;
+            var remainskillfrags2 = document.getElementById('remainskillfrags2').value;
+            var remainskillfrags3 = document.getElementById('remainskillfrags3').value;
+            var remainmasterfrags1 = document.getElementById('remainmasterfrags1').value;
+            var remainmasterfrags2 = document.getElementById('remainmasterfrags2').value;
+            var remainmasterfrags3 = document.getElementById('remainmasterfrags3').value;
+            var remainmasterfrags4 = document.getElementById('remainmasterfrags4').value;
+            var remainenhancefrags1 = document.getElementById('remainenhancefrags1').value;
+            var remainenhancefrags2 = document.getElementById('remainenhancefrags2').value;
+            var remainenhancefrags3 = document.getElementById('remainenhancefrags3').value;
+            var remainenhancefrags4 = document.getElementById('remainenhancefrags4').value;
+            var remaincommonfrags1 = document.getElementById('remaincommonfrags1').value;
+            var remaincommonfrags2 = document.getElementById('remaincommonfrags2').value;
+            var remaincommonfrags3 = document.getElementById('remaincommonfrags3').value;
+            //當前等級
+            var currentLevel = [skillLevel1, skillLevel2, skillLevel3, masterLevel1, masterLevel2, masterLevel3, masterLevel4, enhancementLevel1, enhancementLevel2, enhancementLevel3, enhancementLevel4, commonLevel1, commonLevel2, commonLevel3, remainFragments];
+            //目標等級
+            var objectLevel = [objectskillLevel1, objectskillLevel2, objectskillLevel3, objectmasterLevel1, objectmasterLevel2, objectmasterLevel3, objectmasterLevel4, objectenhancementLevel1, objectenhancementLevel2, objectenhancementLevel3, objectenhancementLevel4, objectcommonLevel1, objectcommonLevel2, objectcommonLevel3]
+            for(let i = 0; i < objectLevel.length; i++){
+                if(currentLevel[i] > objectLevel[i]){
+                    objectLevel[i] = currentLevel[i];
+                }
+            }
+            //計算碎片氣息數量
+            var s1 = skillLevelArr.slice(0, currentLevel[0]).reduce((a, b) => a + b, 0);
+            var s2 = skillLevelArr2.slice(0, currentLevel[1]).reduce((a, b) => a + b, 0);
+            var s3 = skillLevelArr3.slice(0, currentLevel[2]).reduce((a, b) => a + b, 0);
+            var m1 = masterLevelArr.slice(0, currentLevel[3]).reduce((a, b) => a + b, 0);
+            var m2 = masterLevelArr.slice(0, currentLevel[4]).reduce((a, b) => a + b, 0);
+            var m3 = masterLevelArr.slice(0, currentLevel[5]).reduce((a, b) => a + b, 0);
+            var m4 = masterLevelArr.slice(0, currentLevel[6]).reduce((a, b) => a + b, 0);
+            var e1 = enhancementLevelArr.slice(0, currentLevel[7]).reduce((a, b) => a + b, 0);
+            var e2 = enhancementLevelArr.slice(0, currentLevel[8]).reduce((a, b) => a + b, 0);
+            var e3 = enhancementLevelArr.slice(0, currentLevel[9]).reduce((a, b) => a + b, 0);
+            var e4 = enhancementLevelArr.slice(0, currentLevel[10]).reduce((a, b) => a + b, 0);
+            var c1 = commonLevelArr.slice(0, currentLevel[11]).reduce((a, b) => a + b, 0);
+            var c2 = commonLevelArr.slice(0, currentLevel[12]).reduce((a, b) => a + b, 0);
+            var c3 = commonLevelArr3.slice(0, currentLevel[13]).reduce((a, b) => a + b, 0);
+            var os1 = skillLevelArr.slice(0, objectLevel[0]).reduce((a, b) => a + b, 0);
+            var os2 = skillLevelArr2.slice(0, objectLevel[1]).reduce((a, b) => a + b, 0);
+            var os3 = skillLevelArr3.slice(0, objectLevel[2]).reduce((a, b) => a + b, 0);
+            var om1 = masterLevelArr.slice(0, objectLevel[3]).reduce((a, b) => a + b, 0);
+            var om2 = masterLevelArr.slice(0, objectLevel[4]).reduce((a, b) => a + b, 0);
+            var om3 = masterLevelArr.slice(0, objectLevel[5]).reduce((a, b) => a + b, 0);
+            var om4 = masterLevelArr.slice(0, objectLevel[6]).reduce((a, b) => a + b, 0);
+            var oe1 = enhancementLevelArr.slice(0, objectLevel[7]).reduce((a, b) => a + b, 0);
+            var oe2 = enhancementLevelArr.slice(0, objectLevel[8]).reduce((a, b) => a + b, 0);
+            var oe3 = enhancementLevelArr.slice(0, objectLevel[9]).reduce((a, b) => a + b, 0);
+            var oe4 = enhancementLevelArr.slice(0, objectLevel[10]).reduce((a, b) => a + b, 0);
+            var oc1 = commonLevelArr.slice(0, objectLevel[11]).reduce((a, b) => a + b, 0);
+            var oc2 = commonLevelArr.slice(0, objectLevel[12]).reduce((a, b) => a + b, 0);
+            var oc3 = commonLevelArr3.slice(0, objectLevel[13]).reduce((a, b) => a + b, 0);
+            var currentConsumed = s1 + s2 + s3 + m1 + m2 + m3 + m4 + e1 + e2 + e3 + e4 + c1 + c2 + c3 + currentLevel.at(-1);
+            var noSolJanusConsumed = currentConsumed - c1 + currentLevel.at(-1);
+            var needFrag = allFrag - currentConsumed;
+            var noSolJanusNeedFrag = noSolJanusFrag - noSolJanusConsumed;
+            var objectNeedFrags = [os1-s1, os2-s2, os3-s3, om1-m1, om2-m2, om3-m3, om4-m4, oe1-e1, oe2-e2, oe3-e3, oe4-e4, oc1-c1, oc2-c2, oc3-c3];            
+            var objectNeedFrag = objectNeedFrags.reduce((a, b) => a + b, 0);
+            var s1s = skillLevelSoulArr.slice(0, currentLevel[0]).reduce((a, b) => a + b, 0);
+            var s2s = skillLevelSoulArr2.slice(0, currentLevel[1]).reduce((a, b) => a + b, 0);
+            var s3s = skillLevelSoulArr3.slice(0, currentLevel[2]).reduce((a, b) => a + b, 0);
+            var m1s = masterLevelSoulArr.slice(0, currentLevel[3]).reduce((a, b) => a + b, 0);
+            var m2s = masterLevelSoulArr.slice(0, currentLevel[4]).reduce((a, b) => a + b, 0);
+            var m3s = masterLevelSoulArr.slice(0, currentLevel[5]).reduce((a, b) => a + b, 0);
+            var m4s = masterLevelSoulArr.slice(0, currentLevel[6]).reduce((a, b) => a + b, 0);
+            var e1s = enhancementLevelSoulArr.slice(0, currentLevel[7]).reduce((a, b) => a + b, 0);
+            var e2s = enhancementLevelSoulArr.slice(0, currentLevel[8]).reduce((a, b) => a + b, 0);
+            var e3s = enhancementLevelSoulArr.slice(0, currentLevel[9]).reduce((a, b) => a + b, 0);
+            var e4s = enhancementLevelSoulArr.slice(0, currentLevel[10]).reduce((a, b) => a + b, 0);
+            var c1s = commonLevelSoulArr.slice(0, currentLevel[11]).reduce((a, b) => a + b, 0);
+            var c2s = commonLevelSoulArr.slice(0, currentLevel[12]).reduce((a, b) => a + b, 0);
+            var c3s = commonLevelSoulArr3.slice(0, currentLevel[13]).reduce((a, b) => a + b, 0);
+            var os1s = skillLevelSoulArr.slice(0, objectLevel[0]).reduce((a, b) => a + b, 0);
+            var os2s = skillLevelSoulArr2.slice(0, objectLevel[1]).reduce((a, b) => a + b, 0);
+            var os3s = skillLevelSoulArr3.slice(0, objectLevel[2]).reduce((a, b) => a + b, 0);
+            var om1s = masterLevelSoulArr.slice(0, objectLevel[3]).reduce((a, b) => a + b, 0);
+            var om2s = masterLevelSoulArr.slice(0, objectLevel[4]).reduce((a, b) => a + b, 0);
+            var om3s = masterLevelSoulArr.slice(0, objectLevel[5]).reduce((a, b) => a + b, 0);
+            var om4s = masterLevelSoulArr.slice(0, objectLevel[6]).reduce((a, b) => a + b, 0);
+            var oe1s = enhancementLevelSoulArr.slice(0, objectLevel[7]).reduce((a, b) => a + b, 0);
+            var oe2s = enhancementLevelSoulArr.slice(0, objectLevel[8]).reduce((a, b) => a + b, 0);
+            var oe3s = enhancementLevelSoulArr.slice(0, objectLevel[9]).reduce((a, b) => a + b, 0);
+            var oe4s = enhancementLevelSoulArr.slice(0, objectLevel[10]).reduce((a, b) => a + b, 0);
+            var oc1s = commonLevelSoulArr.slice(0, objectLevel[11]).reduce((a, b) => a + b, 0);
+            var oc2s = commonLevelSoulArr.slice(0, objectLevel[12]).reduce((a, b) => a + b, 0);
+            var oc3s = commonLevelSoulArr3.slice(0, objectLevel[13]).reduce((a, b) => a + b, 0);
+            var consumedSoul = s1s + s2s + s3s + m1s + m2s + m3s + m4s + e1s + e2s + e3s + e4s + c1s + c2s + c3s + soul;
+            var noSolJanusConsumedSoul = consumedSoul - c1s;
+            var needSoul = allSoul - consumedSoul;
+            var noSolJanusNeedSoul = consumedSoul - c1s;
+            var objectNeedSouls = [os1s-s1s, os2s-s2s, os3s-s3s, om1s-m1s, om2s-m2s, om3s-m3s, om4s-m4s, oe1s-e1s, oe2s-e2s, oe3s-e3s, oe4s-e4s, oc1s-c1s, oc2s-c2s, oc3s-c3s];
+            var objectNeedSoul = objectNeedSouls.reduce((a, b) => a + b, 0);
+            // 計算結果防呆
+            if(soul > 20){
+                soul = 20;
+                souls = 0;
+            }
+            if(soul == 20){
+                souls = 0;
+            }
+            if (currentConsumed >= allFrag){
+                needFrag = 0;
+            }
+            if (noSolJanusConsumed >= noSolJanusFrag){
+                noSolJanusNeedFrag = 0;
+            }
+           
+            //更新結果
+            document.getElementById('remainskillfrags1').innerText ='已消耗:'+s1s+'/'+s1+'\n共還需:'+(all_skill_soul-s1s)+'/'+(all_skill_frags - s1)+' 目標還需:'+objectNeedSouls[0]+'/'+objectNeedFrags[0];
+            document.getElementById('remainskillfrags2').innerText ='已消耗:'+s2s+'/'+s2+'\n共還需:'+(all_skill_soul2-s2s)+'/'+(all_skill_frags2 - s2)+' 目標還需:'+objectNeedSouls[1]+'/'+objectNeedFrags[1];
+            document.getElementById('remainskillfrags3').innerText ='已消耗:'+s3s+'/'+s3+'\n共還需:'+(all_skill_soul3-s3s)+'/'+(all_skill_frags3 - s3)+' 目標還需:'+objectNeedSouls[2]+'/'+objectNeedFrags[2];
+            document.getElementById('remainmasterfrags1').innerText ='已消耗:'+m1s+'/'+m1+'\n共還需:'+(all_master_soul-m1s)+'/'+(all_master_frags-m1)+' 目標還需:'+objectNeedSouls[3]+'/'+objectNeedFrags[3];
+            document.getElementById('remainmasterfrags2').innerText ='已消耗:'+m2s+'/'+m2+'\n共還需:'+(all_master_soul-m2s)+'/'+(all_master_frags-m2)+' 目標還需:'+objectNeedSouls[4]+'/'+objectNeedFrags[4];
+            document.getElementById('remainmasterfrags3').innerText ='已消耗:'+m3s+'/'+m3+'\n共還需:'+(all_master_soul-m3s)+'/'+(all_master_frags-m3)+' 目標還需:'+objectNeedSouls[5]+'/'+objectNeedFrags[5];
+            document.getElementById('remainmasterfrags4').innerText ='已消耗:'+m4s+'/'+m4+'\n共還需:'+(all_master_soul-m4s)+'/'+(all_master_frags-m4)+' 目標還需:'+objectNeedSouls[6]+'/'+objectNeedFrags[6];
+            document.getElementById('remainenhancefrags1').innerText ='已消耗:'+e1s+'/'+e1+'\n共還需:'+(all_enhance_soul-e1s)+'/'+(all_enhance_frags - e1)+' 目標還需:'+objectNeedSouls[7]+'/'+objectNeedFrags[7];
+            document.getElementById('remainenhancefrags2').innerText ='已消耗:'+e2s+'/'+e2+'\n共還需:'+(all_enhance_soul-e2s)+'/'+(all_enhance_frags - e2)+' 目標還需:'+objectNeedSouls[8]+'/'+objectNeedFrags[8];
+            document.getElementById('remainenhancefrags3').innerText ='已消耗:'+e3s+'/'+e3+'\n共還需:'+(all_enhance_soul-e3s)+'/'+(all_enhance_frags - e3)+' 目標還需:'+objectNeedSouls[9]+'/'+objectNeedFrags[9];
+            document.getElementById('remainenhancefrags4').innerText ='已消耗:'+e4s+'/'+e4+'\n共還需:'+(all_enhance_soul-e4s)+'/'+(all_enhance_frags - e4)+' 目標還需:'+objectNeedSouls[10]+'/'+objectNeedFrags[10];
+            document.getElementById('remaincommonfrags1').innerText ='已消耗:'+c1s+'/'+c1+'\n共還需:'+(all_common_soul-c1s)+'/'+(all_common_frags - c1)+' 目標還需:'+objectNeedSouls[11]+'/'+objectNeedFrags[11];
+            document.getElementById('remaincommonfrags2').innerText ='已消耗:'+c2s+'/'+c2+'\n共還需:'+(all_common_soul-c2s)+'/'+(all_common_frags - c2)+' 目標還需:'+objectNeedSouls[12]+'/'+objectNeedFrags[12];
+            document.getElementById('remaincommonfrags3').innerText ='已消耗:'+c3s+'/'+c3+'\n共還需:'+(all_common_soul3-c3s)+'/'+(all_common_frags3 - c3)+' 目標還需:'+objectNeedSouls[13]+'/'+objectNeedFrags[13];
+            
+            
+            document.getElementById('currentConsumedLabel').innerText = currentConsumed;
+            document.getElementById('currenetConsumedSoulLabel').innerText = consumedSoul;
+
+            document.getElementById('needFragsLabel').innerText = needFrag;
+            document.getElementById('noCommonNeedFragsLabel').innerText = Math.max(0, noSolJanusNeedFrag);
+            document.getElementById('needSoulLabel').innerText = needSoul;
+
+            document.getElementById('fragsProgressLabel').innerText = ((currentConsumed / allFrag) * 100).toFixed(2) + '%';
+            document.getElementById('noCommonFragsProgressLabel').innerText = ((noSolJanusConsumed / noSolJanusFrag) * 100).toFixed(2) + '%';
+
+            document.getElementById('soulProgressLabel').innerText = ((consumedSoul / allSoul) * 100).toFixed(2) + '%';
+
+            // 儲存數據到 localStorage
+            localStorage.setItem('skillLevel1', skillLevel1);
+            localStorage.setItem('skillLevel2', skillLevel2);
+            localStorage.setItem('skillLevel3', skillLevel3);
+            localStorage.setItem('masterLevel1', masterLevel1);
+            localStorage.setItem('masterLevel2', masterLevel2);
+            localStorage.setItem('masterLevel3', masterLevel3);
+            localStorage.setItem('masterLevel4', masterLevel4);
+            localStorage.setItem('enhancementLevel1', enhancementLevel1);
+            localStorage.setItem('enhancementLevel2', enhancementLevel2);
+            localStorage.setItem('enhancementLevel3', enhancementLevel3);
+            localStorage.setItem('enhancementLevel4', enhancementLevel4);
+            localStorage.setItem('commonLevel1', commonLevel1);
+            localStorage.setItem('commonLevel2', commonLevel2);
+            localStorage.setItem('commonLevel3', commonLevel3);
+            localStorage.setItem('objectskillLevel1', objectskillLevel1);
+            localStorage.setItem('objectskillLevel2', objectskillLevel2);
+            localStorage.setItem('objectskillLevel3', objectskillLevel3);
+            localStorage.setItem('objectmasterLevel1', objectmasterLevel1);
+            localStorage.setItem('objectmasterLevel2', objectmasterLevel2);
+            localStorage.setItem('objectmasterLevel3', objectmasterLevel3);
+            localStorage.setItem('objectmasterLevel4', objectmasterLevel4);
+            localStorage.setItem('objectenhancementLevel1', objectenhancementLevel1);
+            localStorage.setItem('objectenhancementLevel2', objectenhancementLevel2);
+            localStorage.setItem('objectenhancementLevel3', objectenhancementLevel3);
+            localStorage.setItem('objectenhancementLevel4', objectenhancementLevel4);
+            localStorage.setItem('objectcommonLevel1', objectcommonLevel1);
+            localStorage.setItem('objectcommonLevel2', objectcommonLevel2);
+            localStorage.setItem('objectcommonLevel3', objectcommonLevel3);
+            localStorage.setItem('remainFragments', remainFragments);
+            localStorage.setItem('currentsoul', soul);
+            localStorage.setItem('currentsouls', souls);
+            localStorage.setItem('jobSelect',jobSelect);
+        }
+        //當頁面加載時讀取 localStorage
+        window.onload = function() {
+            document.getElementById('skillLevel1').value = localStorage.getItem('skillLevel1') || 1;
+            document.getElementById('skillLevel2').value = localStorage.getItem('skillLevel2') || 0;
+            document.getElementById('skillLevel3').value = localStorage.getItem('skillLevel3') || 0;
+            document.getElementById('masterLevel1').value = localStorage.getItem('masterLevel1') || 0;
+            document.getElementById('masterLevel2').value = localStorage.getItem('masterLevel2') || 0;
+            document.getElementById('masterLevel3').value = localStorage.getItem('masterLevel3') || 0;
+            document.getElementById('masterLevel4').value = localStorage.getItem('masterLevel4') || 0;
+            document.getElementById('enhancementLevel1').value = localStorage.getItem('enhancementLevel1') || 0;
+            document.getElementById('enhancementLevel2').value = localStorage.getItem('enhancementLevel2') || 0;
+            document.getElementById('enhancementLevel3').value = localStorage.getItem('enhancementLevel3') || 0;
+            document.getElementById('enhancementLevel4').value = localStorage.getItem('enhancementLevel4') || 0;
+            document.getElementById('commonLevel1').value = localStorage.getItem('commonLevel1') || 0;
+            document.getElementById('commonLevel2').value = localStorage.getItem('commonLevel2') || 0;
+            document.getElementById('commonLevel3').value = localStorage.getItem('commonLevel3') || 0;
+            document.getElementById('objectskillLevel1').value = localStorage.getItem('objectskillLevel1') || 1;
+            document.getElementById('objectskillLevel2').value = localStorage.getItem('objectskillLevel2') || 0;
+            document.getElementById('objectskillLevel3').value = localStorage.getItem('objectskillLevel3') || 0;
+            document.getElementById('objectmasterLevel1').value = localStorage.getItem('objectmasterLevel1') || 0;
+            document.getElementById('objectmasterLevel2').value = localStorage.getItem('objectmasterLevel2') || 0;
+            document.getElementById('objectmasterLevel3').value = localStorage.getItem('objectmasterLevel3') || 0;
+            document.getElementById('objectmasterLevel4').value = localStorage.getItem('objectmasterLevel4') || 0;
+            document.getElementById('objectenhancementLevel1').value = localStorage.getItem('objectenhancementLevel1') || 0;
+            document.getElementById('objectenhancementLevel2').value = localStorage.getItem('objectenhancementLevel2') || 0;
+            document.getElementById('objectenhancementLevel3').value = localStorage.getItem('objectenhancementLevel3') || 0;
+            document.getElementById('objectenhancementLevel4').value = localStorage.getItem('objectenhancementLevel4') || 0;
+            document.getElementById('objectcommonLevel1').value = localStorage.getItem('objectcommonLevel1') || 0;
+            document.getElementById('objectcommonLevel2').value = localStorage.getItem('objectcommonLevel2') || 0;
+            document.getElementById('objectcommonLevel3').value = localStorage.getItem('objectcommonLevel3') || 0;
+            document.getElementById('remainFragments').value = localStorage.getItem('remainFragments') || 0;
+            document.getElementById('currentsoul').value = localStorage.getItem('currentsoul') || 0;
+            document.getElementById('currentsouls').value = localStorage.getItem('currentsouls') || 0;
+            document.getElementById('jobSelect').value = localStorage.getItem('jobSelect') || "選擇職業";
+            
+            // 重新計算以顯示保存的結果
+            calculate();
+            updateSkills();
+        }
+        function reset(){
+            document.getElementById('skillLevel1').value = 1;
+            document.getElementById('skillLevel2').value = 0;
+            document.getElementById('skillLevel3').value = 0;
+            document.getElementById('masterLevel1').value = 0;
+            document.getElementById('masterLevel2').value = 0;
+            document.getElementById('masterLevel3').value = 0;
+            document.getElementById('masterLevel4').value = 0;
+            document.getElementById('enhancementLevel1').value = 0;
+            document.getElementById('enhancementLevel2').value = 0;
+            document.getElementById('enhancementLevel3').value = 0;
+            document.getElementById('enhancementLevel4').value = 0;
+            document.getElementById('commonLevel1').value = 0;
+            document.getElementById('commonLevel2').value = 0;
+            document.getElementById('commonLevel3').value = 0;
+            document.getElementById('objectskillLevel1').value = 1;
+            document.getElementById('objectskillLevel2').value = 0;
+            document.getElementById('objectskillLevel3').value = 0;
+            document.getElementById('objectmasterLevel1').value = 0;
+            document.getElementById('objectmasterLevel2').value = 0;
+            document.getElementById('objectmasterLevel3').value = 0;
+            document.getElementById('objectmasterLevel4').value = 0;
+            document.getElementById('objectenhancementLevel1').value = 0;
+            document.getElementById('objectenhancementLevel2').value = 0;
+            document.getElementById('objectenhancementLevel3').value = 0;
+            document.getElementById('objectenhancementLevel4').value = 0;
+            document.getElementById('objectcommonLevel1').value = 0;
+            document.getElementById('objectcommonLevel2').value = 0;
+            document.getElementById('objectcommonLevel3').value = 0;
+            document.getElementById('remainFragments').value = 0;
+            document.getElementById('currentsoul').value = 0;
+            document.getElementById('currentsouls').value = 0;
+            document.getElementById('jobSelect').value = "選擇職業";
+            localStorage.clear();
+            calculate();
+            updateSkills();
+        }
+    </script>
+</body>
+</html>
